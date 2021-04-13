@@ -2,3 +2,4 @@ src/obj/
 src/bin/
 FunctionalTesting/bin/
 FunctionalTesting/obj/
+.vscode/
