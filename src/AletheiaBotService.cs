@@ -41,7 +41,7 @@ namespace Aletheia.Bot
             return ToReturn.ToArray();
         }
     
-        public string AssembleQuickChartRequestUrlFromData(KeyValuePair<FactLabel, FinancialFactTrendDataPoint[]>[] data_points)
+        public string AssembleQuickChartRequestUrlFromData(KeyValuePair<FactLabel, FinancialFactTrendDataPoint[]>[] data_points, int width, int height)
         {
             //First get a list of all dates
             List<DateTime> AllDates = new List<DateTime>();
@@ -119,8 +119,8 @@ namespace Aletheia.Bot
 
             //ASSEMBLE THE REQUEST
             Chart qc = new Chart();
-            qc.Width = 500;
-            qc.Height = 300;
+            qc.Width = width;
+            qc.Height = height;
             JObject jo = new JObject();
             jo.Add("type", "line");
 
