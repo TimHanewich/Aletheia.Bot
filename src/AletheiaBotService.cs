@@ -128,9 +128,10 @@ namespace Aletheia.Bot
             Chart qc = new Chart();
             qc.Width = width;
             qc.Height = height;
+            qc.BackgroundColor = "white";
             JObject jo = new JObject();
             jo.Add("type", "line");
-
+            
             //Add data
             JObject jo_data = new JObject();
             jo.Add("data", jo_data);
