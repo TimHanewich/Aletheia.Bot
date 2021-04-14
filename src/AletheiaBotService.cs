@@ -240,9 +240,6 @@ namespace Aletheia.Bot
 
                     //Upload the newest time
                     await UploadMostRecentlyProcessedTweetProcessedAtAsync(newest);
-
-
-
                 }
             }
 
