@@ -30,6 +30,7 @@ namespace Aletheia.Bot
 
             List<string> Splitter = new List<string>();
             Splitter.Add(Environment.NewLine);
+            Splitter.Add("\n");
             
             //Go through each line and parse out meaning
             string[] lines = request.Split(Splitter.ToArray(), StringSplitOptions.RemoveEmptyEntries);
