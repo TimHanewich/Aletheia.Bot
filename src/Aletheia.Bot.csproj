@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Version>0.1.0</Version>
+    <Authors>Tim Hanewich</Authors>
+    <Company>Tim Hanewich</Company>
+    <Copyright>Tim Hanewich</Copyright>
+    <PackageLicenseFile>license.md</PackageLicenseFile>
+    <PackageIcon>packageicon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/TimHanewich/Aletheia.Bot</RepositoryUrl>
+    <RepositoryType>public</RepositoryType>
+    <PackageTags>Aletheia</PackageTags>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +21,17 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="QuickChart" Version="2.0.0" />
     <PackageReference Include="TimHanewich.Twitter" Version="0.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\license.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="packageicon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
