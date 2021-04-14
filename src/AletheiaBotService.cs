@@ -212,7 +212,7 @@ namespace Aletheia.Bot
             
             //Get the tweets
             TwitterService ts = new TwitterService(TwitterBearerToken);
-            RecentSearch rs = await ts.RecentSearchAsync(search_term, 25, null, new TweetField[] {TweetField.CreatedAt});
+            RecentSearch rs = await ts.RecentSearchAsync(search_term, 25, null, new TweetField[] {TweetField.CreatedAt, TweetField.AuthorId});
             
             if (rs.Tweets != null)
             {
