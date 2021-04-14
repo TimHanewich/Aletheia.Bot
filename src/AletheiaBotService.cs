@@ -48,7 +48,7 @@ namespace Aletheia.Bot
             return ToReturn.ToArray();
         }
     
-        public string AssembleQuickChartRequestUrlFromData(KeyValuePair<FactLabel, FinancialFactTrendDataPoint[]>[] data_points, int width, int height)
+        public Chart AssembleQuickChartRequestUrlFromData(KeyValuePair<FactLabel, FinancialFactTrendDataPoint[]>[] data_points, int width, int height)
         {
             //First get a list of all dates
             List<DateTime> AllDates = new List<DateTime>();
@@ -123,7 +123,6 @@ namespace Aletheia.Bot
                 DataSets.Add(this_data_set);
             }
 
-
             //ASSEMBLE THE REQUEST
             Chart qc = new Chart();
             qc.Width = width;
@@ -152,7 +151,7 @@ namespace Aletheia.Bot
             qc.Config = jo.ToString();
 
 
-            return qc.GetUrl();
+            return qc;
         }
     
         public async Task<Stream> DownloadQuickChartImageAsync(string url)
