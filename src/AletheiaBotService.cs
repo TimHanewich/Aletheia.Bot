@@ -11,16 +11,23 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
+using TimHanewich.Twitter;
 
 namespace Aletheia.Bot
 {
     public class AletheiaBotService
     {
         private string apikey;
+        private string AzureStorageConnectionString;
+        private string TwitterBearerToken;
 
-        public AletheiaBotService(string api_key)
+        public AletheiaBotService(string aletheia_api_key, string azure_storage_con_str, string twitter_bearer)
         {
-            apikey = api_key;
+            apikey = aletheia_api_key;
+            AzureStorageConnectionString = azure_storage_con_str;
+            TwitterBearerToken = twitter_bearer;
         }
 
         public async Task<KeyValuePair<FactLabel, FinancialFactTrendDataPoint[]>[]> GetFactsForChartRequestAsync(ChartingRequest request)
@@ -153,6 +160,93 @@ namespace Aletheia.Bot
             HttpResponseMessage resp = await hc.GetAsync(url);
             Stream s = await resp.Content.ReadAsStreamAsync();
             return s;
+        }
+    
+        public async Task<DateTimeOffset> GetMostRecentlyProcessedTweetProcessedAtAsync()
+        {
+            CloudStorageAccount csa;
+            CloudStorageAccount.TryParse(AzureStorageConnectionString, out csa);
+
+            CloudBlobClient cbc = csa.CreateCloudBlobClient();
+            CloudBlobContainer cont = cbc.GetContainerReference("general");
+            await cont.CreateIfNotExistsAsync();
+
+            //Get the blob
+            CloudBlockBlob MostRecentlyProcessedTweetProcessedAt = cont.GetBlockBlobReference("MostRecentlyProcessedTweetProcessedAt");
+            if (MostRecentlyProcessedTweetProcessedAt.Exists())
+            {
+                string content = await MostRecentlyProcessedTweetProcessedAt.DownloadTextAsync();
+                try
+                {
+                    DateTimeOffset dt = DateTimeOffset.Parse(content);
+                    return dt;
+                }
+                catch
+                {
+                    return new DateTime(2000, 1, 1);
+                }
+            }
+            else
+            {
+                return new DateTime(2000, 1, 1);
+            }
+        }
+    
+        public async Task UploadMostRecentlyProcessedTweetProcessedAtAsync(DateTimeOffset most_recent)
+        {
+            CloudStorageAccount csa;
+            CloudStorageAccount.TryParse(AzureStorageConnectionString, out csa);
+
+            CloudBlobClient cbc = csa.CreateCloudBlobClient();
+            CloudBlobContainer cont = cbc.GetContainerReference("general");
+            await cont.CreateIfNotExistsAsync();
+
+            CloudBlockBlob MostRecentlyProcessedTweetProcessedAt = cont.GetBlockBlobReference("MostRecentlyProcessedTweetProcessedAt");
+            await MostRecentlyProcessedTweetProcessedAt.UploadTextAsync(most_recent.ToString());
+        }
+    
+        public async Task<Tweet[]> ObserveNewTweetMentionsAsync(string search_term)
+        {
+            List<Tweet> ToReturn = new List<Tweet>();
+            DateTimeOffset LastObservedAt = await GetMostRecentlyProcessedTweetProcessedAtAsync();
+            
+            //Get the tweets
+            TwitterService ts = new TwitterService(TwitterBearerToken);
+            RecentSearch rs = await ts.RecentSearchAsync(search_term, 25, null, new TweetField[] {TweetField.CreatedAt});
+            
+            if (rs.Tweets != null)
+            {
+                if (rs.Tweets.Length > 0)
+                {
+
+                    //Collect the ones that apply
+                    foreach (Tweet t in rs.Tweets)
+                    {
+                        if (t.CreatedAt.Value > LastObservedAt)
+                        {
+                            ToReturn.Add(t);
+                        }
+                    }
+                    
+                    //Get the newest
+                    DateTimeOffset newest = rs.Tweets[0].CreatedAt.Value;
+                    foreach (Tweet t in rs.Tweets)
+                    {
+                        if (t.CreatedAt.Value > newest)
+                        {
+                            newest = t.CreatedAt.Value;
+                        }
+                    }
+
+                    //Upload the newest time
+                    await UploadMostRecentlyProcessedTweetProcessedAtAsync(newest);
+
+
+
+                }
+            }
+
+            return ToReturn.ToArray();
         }
     }
 }

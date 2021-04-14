@@ -6,8 +6,10 @@
 
   <ItemGroup>
     <PackageReference Include="Aletheia" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="QuickChart" Version="2.0.0" />
+    <PackageReference Include="TimHanewich.Twitter" Version="0.3.1" />
   </ItemGroup>
 
 </Project>
